@@ -1,0 +1,7 @@
+package com.example.smartpantry;
+import android.os.*;import android.widget.*;import androidx.appcompat.app.AppCompatActivity;import com.example.smartpantry.database.DatabaseHelper;import com.example.smartpantry.models.PantryItem;
+public class AddEditIngredientActivity extends AppCompatActivity{
+ DatabaseHelper db;EditText name,qty,unit,expiry;int id=-1;
+ @Override protected void onCreate(Bundle b){super.onCreate(b);setContentView(R.layout.activity_add_edit);db=new DatabaseHelper(this);name=findViewById(R.id.edtName);qty=findViewById(R.id.edtQuantity);unit=findViewById(R.id.edtUnit);expiry=findViewById(R.id.edtExpiry);id=getIntent().getIntExtra("id",-1);if(id!=-1){PantryItem p=db.getPantryItem(id);name.setText(p.getName());qty.setText(String.valueOf(p.getQuantity()));unit.setText(p.getUnit());expiry.setText(p.getExpiry());findViewById(R.id.txtTitle); }findViewById(R.id.btnSave).setOnClickListener(v->save());}
+ void save(){String n=name.getText().toString().trim(),q=qty.getText().toString().trim(),u=unit.getText().toString().trim();if(n.isEmpty()||q.isEmpty()||u.isEmpty()){Toast.makeText(this,"Please complete all required fields.",Toast.LENGTH_SHORT).show();return;}double d;try{d=Double.parseDouble(q);if(d<=0)throw new Exception();}catch(Exception e){Toast.makeText(this,"Quantity must be a positive number.",Toast.LENGTH_SHORT).show();return;}if(id==-1)db.addPantry(n,d,u,expiry.getText().toString().trim());else db.updatePantry(id,n,d,u,expiry.getText().toString().trim());finish();}
+}
